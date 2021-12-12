@@ -2,20 +2,10 @@ from flask.helpers import url_for
 from flask_app import app
 from flask import render_template, redirect, request, session
 from flask_app.models.user import User
-from flask_app.models import user
+# from flask_app.models import user
 from flask_bcrypt import Bcrypt
 
 bcrypt = Bcrypt(app)
-
-# def loginCheck():
-#         is_logged_in = False
-#         if not 'user_id' in session:
-#             is_logged_in = False
-            
-#         else:
-#             is_logged_in = True
-#             print(session)
-#             return is_logged_in
 
 @app.route('/')
 def index():
@@ -35,8 +25,6 @@ def register():
 
     user_id = User.register(data)
     session['user_id'] = user_id 
-    session['first_name'] = user.first_name
-    session['last_name'] = user.last_name
     return redirect("/active")
 
 @app.route('/login', methods = ['POST'])
@@ -55,7 +43,6 @@ def login():
 @app.route('/logout')
 def logout():
     session.pop('user_id')
-    # session.clear()
     return redirect('/')
 
 @app.route('/active')
@@ -63,4 +50,8 @@ def active():
     if not 'user_id' in session:
         return redirect('/')
     else:
-        return render_template('active.html')    
+        data = {
+            'id' : session['user_id']
+        }
+        active_user = User.getById(data)
+        return render_template('active.html', active_user = active_user)    

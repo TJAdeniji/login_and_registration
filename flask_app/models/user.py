@@ -32,6 +32,15 @@ class User:
             return False
         user = cls(result[0]) 
         return user
+    
+    @classmethod
+    def getById(cls, data):
+        query = "SELECT * FROM user WHERE user.id = %(id)s"
+        result = connectToMySQL(cls.db).query_db(query, data)
+        if not result:
+            return False
+        user = cls(result[0])
+        return user
         
     @staticmethod
     def registrationValidation(user): #Make sure to test all validations
